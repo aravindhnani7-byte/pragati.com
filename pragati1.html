@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pragathi Turmeric - IISR-Pragathi (ACC-48)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --brand-green: #22c55e;
+            --brand-cream: #fefdf0;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: white;
+        }
+
+        .diamond-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            transform: rotate(45deg);
+        }
+
+        .diamond-item {
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            border: 4px solid white;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            background-color: #f1f5f9;
+        }
+
+        .diamond-item img {
+            transform: rotate(-45deg) scale(1.4);
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .bg-cream { background-color: var(--brand-cream); }
+        
+        .infra-card {
+            transition: all 0.3s ease;
+        }
+        .infra-card:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* View Switching Classes */
+        .view-hidden { display: none !important; }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+
+        .mobile-menu.active {
+            max-height: 500px;
+        }
+
+        .toggle-btn {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .toggle-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .toggle-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Carousel Styles */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 2.5rem;
+            overflow: hidden;
+            background-color: #f1f5f9;
+        }
+
+        .carousel-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .carousel-slide.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            color: #333;
+            padding: 12px 16px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            z-index: 10;
+            display: none;
+        }
+
+        .carousel-btn:hover {
+            background-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .carousel-btn.prev {
+            left: 15px;
+        }
+
+        .carousel-btn.next {
+            right: 15px;
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .carousel-dot.active {
+            background-color: #22c55e;
+            border-color: white;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- NAVIGATION -->
+    <nav class="bg-white border-b border-slate-100 py-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="showView('home')">
+                <span class="text-2xl font-extrabold text-orange-600 uppercase tracking-tighter">PRAGATI</span>
+            </div>
+            
+            <!-- Desktop Menu (hidden on xs, sm, md) -->
+            <div class="hidden lg:flex items-center space-x-6 text-[11px] font-bold text-slate-600 uppercase tracking-widest">
+                <a href="javascript:void(0)" onclick="showView('home')" class="hover:text-orange-600 transition-colors">Home</a>
+                <a href="javascript:void(0)" onclick="showView('home'); document.getElementById('about').scrollIntoView()" class="hover:text-green-600">Technical Specs</a>
+                <a href="javascript:void(0)" onclick="showView('visionary')" class="hover:text-green-600">The Visionary</a>
+                <a href="javascript:void(0)" onclick="showView('congress')" class="hover:text-orange-600">Spice Congress</a>
+                <a href="javascript:void(0)" onclick="showView('home'); document.getElementById('infrastructure').scrollIntoView()" class="hover:text-green-600">Cultivation</a>
+            </div>
+
+            <!-- Desktop Contact Button -->
+            <a href="javascript:void(0)" onclick="showView('home'); document.getElementById('contact').scrollIntoView()" class="hidden lg:inline-block border-2 border-green-600 text-green-600 px-5 py-2 rounded-lg font-bold text-xs hover:bg-green-600 hover:text-white transition-all">
+                Contact Us
+            </a>
+
+            <!-- Mobile Toggle Button (visible on xs, sm, md) -->
+            <div class="lg:hidden flex items-center gap-4">
+                <a href="javascript:void(0)" onclick="showView('home'); document.getElementById('contact').scrollIntoView()" class="border-2 border-green-600 text-green-600 px-3 py-2 rounded-lg font-bold text-xs hover:bg-green-600 hover:text-white transition-all">
+                    Contact
+                </a>
+                <button class="toggle-btn p-2 flex flex-col gap-1.5" onclick="toggleMobileMenu()">
+                    <span class="w-6 h-0.5 bg-slate-800 rounded transition-all"></span>
+                    <span class="w-6 h-0.5 bg-slate-800 rounded transition-all"></span>
+                    <span class="w-6 h-0.5 bg-slate-800 rounded transition-all"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu (visible on xs, sm, md) -->
+        <div id="mobile-menu" class="mobile-menu lg:hidden bg-white border-t border-slate-100">
+            <div class="max-w-7xl mx-auto px-4 py-4 space-y-3">
+                <a href="javascript:void(0)" onclick="showView('home'); toggleMobileMenu()" class="block text-sm font-bold text-slate-600 uppercase tracking-widest hover:text-orange-600 transition-colors py-2 px-2">Home</a>
+                <a href="javascript:void(0)" onclick="showView('home'); document.getElementById('about').scrollIntoView(); toggleMobileMenu()" class="block text-sm font-bold text-slate-600 uppercase tracking-widest hover:text-green-600 transition-colors py-2 px-2">Technical Specs</a>
+                <a href="javascript:void(0)" onclick="showView('visionary'); toggleMobileMenu()" class="block text-sm font-bold text-slate-600 uppercase tracking-widest hover:text-green-600 transition-colors py-2 px-2">The Visionary</a>
+                <a href="javascript:void(0)" onclick="showView('congress'); toggleMobileMenu()" class="block text-sm font-bold text-slate-600 uppercase tracking-widest hover:text-orange-600 transition-colors py-2 px-2">Spice Congress</a>
+                <a href="javascript:void(0)" onclick="showView('home'); document.getElementById('infrastructure').scrollIntoView(); toggleMobileMenu()" class="block text-sm font-bold text-slate-600 uppercase tracking-widest hover:text-green-600 transition-colors py-2 px-2">Infrastructure</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- VIEW: HOME PAGE -->
+    <main id="home-view">
+        <!-- Hero Section -->
+        <header class="bg-cream py-20 lg:py-32 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                
+                    <h1 class="text-5xl lg:text-7xl font-extrabold text-slate-900 leading-tight mb-6">
+                        Empowering the <br/>
+                        <span class="text-green-700">Turmeric Growers</span>
+                    </h1>
+                    <p class="text-slate-600 text-lg mb-8 leading-relaxed">
+                        Licensed by the ICAR-Indian Institute of Spices Research (IISR), we provide the high-yielding, short-duration variety <strong>IISR PRAGATI (ACC-48)</strong>. Elevate your yield with a variety proven to succeed across Indian geographies.
+                    </p>
+                    <div class="flex flex-wrap gap-4 mb-10">
+                        <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-slate-100 shadow-sm text-sm font-medium">
+                            <i data-lucide="timer" class="text-orange-500 w-4 h-4"></i> upto 180 Days
+                        </div>
+                        <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-slate-100 shadow-sm text-sm font-medium">
+                            <i data-lucide="droplets" class="text-blue-500 w-4 h-4"></i> upto 5.02% Curcumin
+                        </div>
+                        <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-slate-100 shadow-sm text-sm font-medium">
+                            <i data-lucide="shield" class="text-green-500 w-4 h-4"></i> Root Rot Resistant
+                        </div>
+                    <div class="inline-flex items-center gap-2 bg-green-100 text-green-800 px-3 py-1 rounded-full text-[10px] font-bold mb-6 uppercase tracking-widest">
+                        <i data-lucide="zap" class="w-3 h-3"></i> 34% Yield Increase Over Local Varieties
+                    </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="document.getElementById('contact').scrollIntoView()" class="bg-orange-500 text-white px-10 py-4 rounded shadow-xl shadow-orange-100 font-bold hover:bg-orange-600 transition-all uppercase tracking-widest text-sm">
+                            Book Seeds Now
+                        </button>
+                        <button onclick="showView('visionary')" class="bg-white border border-slate-200 text-slate-700 px-10 py-4 rounded font-bold hover:bg-slate-50 transition-all flex items-center justify-center gap-2 text-sm uppercase tracking-widest"> THE ONE BEHIND THE SEED
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="relative flex justify-center items-center py-12">
+                    <div class="diamond-grid w-80 h-80 lg:w-96 lg:h-96">
+                        <div class="diamond-item"><img src="https://lh3.googleusercontent.com/d/1yRtlnSZ3V6Vfk6j9wNyJkOpSYRNt7L5U=s800" alt="Dry Turmeric ACC 48"></div>
+                        <div class="diamond-item"><img src="https://lh3.googleusercontent.com/d/1-0USeRlJ_GuNT74ia0vE1GF0ETXbCOFL=s800" alt="Pragathi 5% Curcumin"></div>
+                        <div class="diamond-item"><img src="https://lh3.googleusercontent.com/d/1QczpO41C8xrwF0ddmyfoXsjZ9bbg1Qsw=s800" alt="IISR Pragathi Farm"></div>
+                        <div class="diamond-item"><img src="https://lh3.googleusercontent.com/d/1iyPhcO2J5gJWaP4tzhAgCaaAPbn9LjXp=s800" alt="Certified ACC-48 Seeds"></div>
+                        <div class="diamond-item"><img src="https://lh3.googleusercontent.com/d/18xxZueyUdKcsX4zUhHX6RkhKOlO5BiBA=s800" alt="Turmeric Product 5"></div>
+                        <div class="diamond-item"><img src="https://lh3.googleusercontent.com/d/1QMkUR3SlUYODYlOVYcZ9u0S0Cy7ZWL9I=s800" alt="Turmeric Product 6"></div>
+                        <div class="diamond-item"><img src="https://lh3.googleusercontent.com/d/1lvg9kvZSqanhPDlFWd0GQfHUMjQfX0qL=s800" alt="Turmeric Product 7"></div>
+                        <div class="diamond-item"><img src="https://lh3.googleusercontent.com/d/18I4jMWOlHFnTszar6vIeP3ZoSeuJc9qr=s800" alt="Turmeric Product 8"></div>
+                        <div class="diamond-item"><img src="https://lh3.googleusercontent.com/d/1di7yXm8NjeBx5cXX0hNijETTjCapy2jK=s800" alt="Turmeric Product 9"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Technical Specs Section -->
+        <section id="about" class="py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="text-center mb-20">
+                    <h2 class="text-4xl font-bold mb-4">Scientific Cultivation & Clonal Selection</h2>
+                    <p class="text-slate-500 max-w-2xl mx-auto">Field-tested as Acc. 48 for over three years in different turmeric growing regions of the country under various climatic conditions.</p>
+                </div>
+                
+                <div class="grid lg:grid-cols-2 gap-16 items-start mb-24">
+                    <div class="bg-slate-50 p-10 rounded-[2.5rem] border border-slate-100">
+                        <h3 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                            <span class="w-8 h-8 bg-orange-500 text-white rounded-lg flex items-center justify-center text-sm">48</span> 
+                            IISR PRAGATI (ACC-48)
+                        </h3>
+                        <p class="text-slate-600 mb-8 leading-relaxed text-sm">
+                            A clonal selection from the vast repository of turmeric germplasm. Developed for benefit of farmers in irrigation-scarce areas. High yielding variety with average yield of 38 t/ha (fresh rhizomes), reaching 52 t/ha under favorable conditions.
+                        </p>
+                        <ul class="space-y-4">
+                            <li class="flex justify-between items-center pb-3 border-b border-slate-200">
+                                <span class="text-slate-500 font-medium">Curcumin Stability</span>
+                                <span class="font-bold text-orange-600">upto 5.02% (PAN India services)</span>
+                            </li>
+                            <li class="flex justify-between items-center pb-3 border-b border-slatcome-200">
+                                <span class="text-slate-500 font-medium">Yield Increase</span>
+                                <span class="font-bold text-green-700">upto 34% Over Local Varieties</span>
+                            </li>
+                            <li class="flex justify-between items-center pb-3 border-b border-slate-200">
+                                <span class="text-slate-500 font-medium">Duration</span>
+                                <span class="font-bold text-slate-800">upto 180 Days</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="relative rounded-[2.5rem] overflow-hidden shadow-xl border border-slate-100 h-full min-h-[400px]">
+                        <img src="https://lh3.googleusercontent.com/d/1FOaVCd7vQcsZ4jrtQF2UfTWs3wQmHJ-J=s1200" alt="Curcumin Analysis Report 2" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROCESS FLOW ART PROCESSING SECTION -->
+        <section id="infrastructure" class="py-24 bg-blue-50 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h4 class="text-orange-600 font-bold uppercase tracking-widest text-[10px] mb-2">Hygienic & Professional Infrastructure</h4>
+                    <h2 class="text-4xl lg:text-5xl font-serif font-bold text-slate-900 leading-tight">Art Processing</h2>
+                    <p class="mt-4 text-slate-500 font-sans max-w-2xl mx-auto">From field to factory, each step mapped with scientific precision.</p>
+                </div>
+
+                <div class="relative grid grid-cols-1 lg:grid-cols-4 gap-12">
+                    <!-- Column 1: image top, text bottom -->
+                    <div class="flex flex-col items-center">
+                        <img src="https://lh3.googleusercontent.com/d/1xIHLebqom_CaV11XCVXtkr0pQ85tv0to=s800" alt="" class="w-full aspect-square object-cover rounded-lg shadow-lg mb-6">
+                        <div class="text-center">
+                            <div class="flex flex-col items-center">
+                            <i data-lucide="sprout" class="text-green-600 w-6 h-6 mb-1"></i>
+                            <h3 class="font-sans text-xl font-bold">Field-Fresh Cultivation</h3>
+                            <p class="text-sm leading-relaxed text-justify">Nurturing crops in nutrient-rich soil to ensure every plant reaches its peak natural potency.</p>
+                        </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: text top, image bottom -->
+                    <div class="flex flex-col items-center">
+                        <div class="text-center mb-6">
+                            <div class="flex flex-col items-center">
+                            <i data-lucide="shield-check" class="text-blue-600 w-6 h-6 mb-1"></i>
+                            <h3 class="font-sans text-xl font-bold">Hygienic Handling Excellence</h3>
+                            <p class="text-sm leading-relaxed text-justify">Processing in strictly controlled, sanitized environments to preserve purity from start to finish.</p>
+                        </div>
+                        </div>
+                        <img src="https://lh3.googleusercontent.com/d/1mJmZA7PjDkuNPThbdEybOAK686dll68t=s800" alt="" class="w-full aspect-square object-cover rounded-lg shadow-lg">
+                    </div>
+
+                    <!-- Column 3: image top, text bottom -->
+                    <div class="flex flex-col items-center">
+                        <img src="https://lh3.googleusercontent.com/d/18RjK-vkWHBfnmOohCwhk-c9NwvNv7Rit=s800" alt="" class="w-full aspect-square object-cover rounded-lg shadow-lg mb-6">
+                        <div class="text-center">
+                            <div class="flex flex-col items-center">
+                            <i data-lucide="droplet" class="text-yellow-600 w-6 h-6 mb-1"></i>
+                            <h3 class="font-sans text-xl font-bold">Optimized Drying &amp; Purity</h3>
+                            <p class="text-sm leading-relaxed text-justify">Utilizing precision curing techniques to stabilize active compounds and lock in natural goodness.</p>
+                        </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 4: text top, image bottom -->
+                    <div class="flex flex-col items-center">
+                        <div class="text-center mb-6">
+                            <div class="flex flex-col items-center">
+                            <i data-lucide="beaker" class="text-red-600 w-6 h-6 mb-1"></i>
+                            <h3 class="font-sans text-xl font-bold">Rigorous Quality Assessment</h3>
+                            <p class="text-sm leading-relaxed text-justify">Rigorous multi-stage testing to guarantee that every batch meets global safety and purity standards.</p>
+                        </div>
+                        </div>
+                        <img src="https://lh3.googleusercontent.com/d/1MZJC87PU-eej7W0Yr8k56GnU6aaHPCGY=s800" alt="" class="w-full aspect-square object-cover rounded-lg shadow-lg">
+                    </div>
+
+                    <!-- Connector line (stepped) placeholder -->
+                    <svg class="absolute inset-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#D4AF37" stroke-width="2">
+                        <path d="M25 50 H275 L525 L775" class="stroke-current" />
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- Leadership Team Section -->
+        <section id="team" class="py-24 bg-slate-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="text-center mb-20">
+                    <h4 class="text-orange-600 font-bold uppercase tracking-widest text-xs mb-4">Industry Leaders</h4>
+                    <h2 class="text-4xl font-bold text-slate-900">The Team Behind Pragati</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
+                    <!-- Member 1: Sri Azad (Visionary) -->
+                    <div class="text-center group cursor-pointer" onclick="showView('visionary')">
+                        <div class="w-48 h-48 mx-auto rounded-full overflow-hidden border-4 border-white shadow-xl mb-6 relative bg-slate-200">
+                            <img src="https://lh3.googleusercontent.com/d/1fidCa8f-3_CcaHgKMnbqW0ZdrZcHf7kb=s400" alt="Sri Azad" class="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500">
+                            <div class="absolute inset-0 bg-orange-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <i data-lucide="eye" class="text-white w-8 h-8"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold"> Late Pidikiti Chandra Shekar Azad</h3>
+                        <p class="text-green-600 font-bold text-xs uppercase tracking-widest mb-4">Visionary & Progressive Pioneer</p>
+                        <p class="text-slate-500 text-sm italic leading-relaxed underline underline-offset-4">Click to View Visionary Legacy</p>
+                    </div>
+
+                    <div class="text-center group">
+                        <div class="w-48 h-48 mx-auto rounded-full overflow-hidden border-4 border-white shadow-xl mb-6 relative bg-slate-100">
+                            <img src="https://lh3.googleusercontent.com/d/1n6glth1QAhh_iXzDmNJAhHd_7Xt_GPyB=s400" alt="Field Verification" class="w-full h-full object-cover">
+                        </div>
+                        <h3 class="text-xl font-bold">Scientific Partnership</h3>
+                        <p class="text-green-600 font-bold text-xs uppercase tracking-widest mb-4">ICAR-IISR Licensed</p>
+                        <p class="text-slate-500 text-sm italic">Direct collaboration with Indian Institute of Spices Research.</p>
+                    </div>
+
+                    <div class="text-center group">
+                        <div class="w-48 h-48 mx-auto rounded-full overflow-hidden border-4 border-white shadow-xl mb-6 relative bg-slate-100">
+                            <img src="https://api.dicebear.com/7.x/initials/svg?seed=UA&backgroundColor=22c55e" alt="Umar Akthar" class="w-full h-full object-cover">
+                        </div>
+                        <h3 class="text-xl font-bold">Umar Akthar</h3>
+                        <p class="text-green-600 font-bold text-xs uppercase tracking-widest mb-4">IISR licensed seed supplier</p>
+                        <p class="text-slate-500 text-sm italic leading-relaxed px-4">To carry on the legacy of Visionary Sri Chandra Shekhar Azad across India.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="bg-white pt-24 pb-12 border-t border-slate-100">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="bg-slate-900 rounded-[3rem] p-12 lg:p-20 text-white grid lg:grid-cols-2 gap-16 items-center mb-24 shadow-2xl">
+                    <div>
+                        <h2 class="text-4xl lg:text-5xl font-bold mb-8">Empowering Your Farm</h2>
+                        <p class="text-slate-400 text-lg mb-12 text-sm leading-relaxed">
+                            We offer long-term result-oriented field-level consultation. Secure your genuine IISR-Pragathi seeds today.
+                        </p>
+                        <div class="space-y-6 text-sm">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-white/10 rounded flex items-center justify-center"><i data-lucide="phone" class="w-5 h-5 text-orange-500"></i></div>
+                                <span class="font-bold flex flex-wrap gap-x-2">
+                                    <a href="tel:+919676144566" class="hover:text-orange-500 transition-colors">+91 96761 44566</a>
+                                    <span class="text-slate-600">/</span>
+                                    <a href="tel:+919063843133" class="hover:text-orange-500 transition-colors">+91 9063843133</a>
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-white/10 rounded flex items-center justify-center"><i data-lucide="mail" class="w-5 h-5 text-orange-500"></i></div>
+                                <span class="font-bold"><a href="mailto:osman.acs@gmail.com" class="hover:text-orange-500 transition-colors">osman.acs@gmail.com</a></span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-white/10 rounded flex items-center justify-center"><i data-lucide="message-circle" class="w-5 h-5 text-green-500"></i></div>
+                                <span class="font-bold">
+                                <a href="https://wa.me/919063843133" 
+                                target="_blank" 
+                                class="hover:text-orange-500 transition-colors">
+                                WhatsApp
+                                </a>
+                            </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-10 rounded-[2rem] text-slate-900 shadow-xl">
+                        <form class="space-y-4">
+                            <input type="text" placeholder="Your Name" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl outline-none focus:ring-2 focus:ring-green-600">
+                            <input type="tel" placeholder="Mobile Number" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl outline-none focus:ring-2 focus:ring-green-600">
+                            <!-- Quantity Input -->
+                            <div class="space-y-2">
+                                <label class="text-sm font-semibold text-slate-700">Quantity Required (KGs)</label>
+                                <input type="number" placeholder="Enter Quantity" min="1" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl outline-none focus:ring-2 focus:ring-green-600">
+                            </div>
+
+                            <!-- Seed Type Selection -->
+                            <div class="space-y-3">
+                                <label class="text-sm font-semibold text-slate-700">Select Seed Type</label>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer">
+                                        <input type="radio" id="pragati" name="seedType" value="pragati" class="w-4 h-4 text-green-600 cursor-pointer">
+                                        <label for="pragati" class="cursor-pointer font-medium text-slate-700 flex-1">Pragathi Turmeric</label>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer">
+                                        <input type="radio" id="salem" name="seedType" value="salem" class="w-4 h-4 text-green-600 cursor-pointer">
+                                        <label for="salem" class="cursor-pointer font-medium text-slate-700 flex-1">Salem</label>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer">
+                                        <input type="radio" id="waygaon" name="seedType" value="waygaon" class="w-4 h-4 text-green-600 cursor-pointer">
+                                        <label for="waygaon" class="cursor-pointer font-medium text-slate-700 flex-1">Waygaon</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="w-full bg-green-600 text-white font-bold py-5 rounded-xl uppercase tracking-widest text-sm hover:bg-green-700 transition-all">Submit Inquiry</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row justify-between items-center text-slate-400 text-xs gap-4 pt-12">
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="text-xl font-extrabold text-orange-600">PRAGATI</span>
+                    </div>
+                    <p>Copyright © 2026 Pragati Turmeric Group. Adilabad, Telangana - 504001.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- VIEW: VISIONARY PAGE (Pidikiti Chandra Shekar Azad) -->
+    <main id="visionary-view" class="view-hidden bg-white min-h-screen">
+        <section class="bg-slate-50 py-20">
+            <div class="max-w-7xl mx-auto px-4">
+                <button onclick="showView('home')" class="inline-flex items-center gap-2 text-slate-400 hover:text-slate-900 transition-colors mb-12 group font-bold">
+                    <i data-lucide="arrow-left" class="w-5 h-5 group-hover:-translate-x-1 transition-transform"></i> Back to Home
+                </button>
+                
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <h4 class="text-orange-600 font-bold uppercase tracking-widest text-sm mb-4">Legacy & Vision</h4>
+                        <h1 class="text-4xl lg:text-6xl font-extrabold leading-tight mb-8 text-slate-900">The Visionary<br/> Late Sri Chandra Shekar Azad</h1>
+                        <p class="text-xl text-slate-600 leading-relaxed mb-8">
+                            At 80 years old, Mr. Azad stands as the <b>Visionary</b> behind the widespread adoption of the IISR-Pragathi variety in India. Hand-picked by ICAR-IISR to carry the license for Pragathi, his mission is to ensure farmers achieve sustainable prosperity through scientific advancements.
+                        </p>
+                        <div class="grid grid-cols-2 gap-8 mb-12">
+                            <div class="border-l-4 border-green-600 pl-6">
+                                <div class="text-4xl font-black text-slate-900">50+</div>
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Years of Mastery</div>
+                            </div>
+                            <div class="border-l-4 border-orange-600 pl-6">
+                                <div class="text-4xl font-black text-slate-900">5</div>
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">State Govt Awards</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="aspect-[3/4] rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white">
+                            <img src="https://lh3.googleusercontent.com/d/1fidCa8f-3_CcaHgKMnbqW0ZdrZcHf7kb=s1200" alt="Visionary Portrait" class="w-full h-full object-cover">
+                            <div class="p-8 bg-white"><p class="font-bold text-slate-800">State Level Recognition & Award Recognition</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-24">
+            <div class="max-w-7xl mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-12 text-center text-slate-900">Visionary Milestones</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="rounded-[2rem] overflow-hidden shadow-lg border border-slate-100 group">
+                        <img src="https://lh3.googleusercontent.com/d/1x-RU8VNO-ffA_QJNcjdxx0zYRnXWD2V_=s800" class="w-full h-auto transition-transform group-hover:scale-105 duration-700">
+                        <div class="p-8 bg-white"><p class="font-bold text-slate-800">Direct Interaction with IISR Scientists<br>ICAR–IISR signed a non-exclusive license in 2017 with Mr. Pidikiti Chandrasekhar Azad of Guntur, Andhra Pradesh for the turmeric variety IISR-Pragati. The variety is high-yielding (38–52 t/ha), short duration (180 days), rich in curcumin (5.02%), and moderately resistant to root-knot nematode. It is suitable for cultivation in several Indian states and supports the supply of quality seed rhizomes to growers and entrepreneurs.</p></div>
+                    </div>
+                    <div class="rounded-[2rem] overflow-hidden shadow-lg border border-slate-100 group">
+                        <img src="https://lh3.googleusercontent.com/d/1n6glth1QAhh_iXzDmNJAhHd_7Xt_GPyB=s800" class="w-full h-auto transition-transform group-hover:scale-105 duration-700">
+                        <div class="p-8 bg-white"><p class="font-bold text-slate-800">Leading Field Verification Sessions:Discussions with Scientists of IISR prompting PRAGATI
+                        </p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-24 bg-green-600 text-white">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <i data-lucide="quote" class="w-12 h-12 mx-auto mb-8 opacity-40"></i>
+                <h2 class="text-3xl lg:text-4xl font-bold leading-tight mb-8 italic">
+                    "We don't just supply seeds; we supply a sustainable future for every farmer. My mission is to carry forward the scientific advancements of IISR to every field in India."
+                </h2>
+                <p class="font-bold uppercase tracking-[0.3em] text-sm">- Visionary Sri Pidikiti Chandra Shekar Azad</p>
+            </div>
+        </section>
+
+        <footer class="bg-white border-t border-slate-100 py-12 text-center">
+            <span class="text-2xl font-extrabold text-orange-600 tracking-tighter">PRAGATI</span>
+            <p class="text-slate-400 text-xs mt-4 uppercase tracking-widest font-bold">The Visionary Legacy</p>
+        </footer>
+    </main>
+
+    <!-- VIEW: INTERNATIONAL SPICE CONGRESS 2019 PAGE -->
+    <main id="congress-view" class="view-hidden bg-slate-50 min-h-screen">
+        <section class="bg-slate-900 py-24 text-white relative overflow-hidden">
+            <div class="absolute inset-0 opacity-20">
+                <img src="https://i.ibb.co/gZNynCRT/Screenshot-2026-01-25-131448.png" alt="Spice Congress Background" class="w-full h-full object-cover">
+            </div>
+            <div class="max-w-7xl mx-auto px-4 relative z-10">
+                <button onclick="showView('home')" class="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-8 group font-bold">
+                    <i data-lucide="arrow-left" class="w-5 h-5 group-hover:-translate-x-1 transition-transform"></i> Back to Home
+                </button>
+                <h1 class="text-4xl lg:text-6xl font-extrabold leading-tight mb-4 text-green-500">International Spice Congress 2019</h1>
+                <p class="text-xl text-slate-300 max-w-3xl">Novotel, Hyderabad: A visionary milestone event for the State's spice industry.</p>
+            </div>
+        </section>
+
+        <section class="py-20">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="grid lg:grid-cols-3 gap-16">
+                    <div class="lg:col-span-2 space-y-12">
+                        <div class="bg-white p-10 rounded-[2.5rem] shadow-sm border border-slate-200">
+                            <h2 class="text-3xl font-bold mb-6 text-slate-900">A Visionary Government Initiative</h2>
+                            <p class="text-slate-600 leading-relaxed mb-8">
+                                 The then Honorable Commissioner Horticulture <strong>Sri Venkat Rami Reddy</strong> took a great initiative to position the state’s abundantly available spice Turmeric on the international stage. Five young progressive farmers were selected to represent the best practices and high curcumin varieties.
+                            </p>
+                            <div class="rounded-2xl overflow-hidden shadow-lg mb-8 aspect-video border border-slate-100">
+                                <a href="https://imgbb.com/" target="_blank"><img src="https://lh3.googleusercontent.com/d/1PHII-ohtTpFsJ4aOaHi8m3ggHIcY4WNz=s800" alt="Initiative Highlight" class="w-full h-full object-cover"></a>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-10 rounded-[2.5rem] shadow-sm border border-slate-200">
+                            <h2 class="text-3xl font-bold mb-8 text-slate-900">Event Image Gallery</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="rounded-2xl overflow-hidden shadow-md h-64 border border-slate-100 group">
+                                    <a href="https://imgbb.com/" target="_blank"><img src="https://lh3.googleusercontent.com/d/1PHII-ohtTpFsJ4aOaHi8m3ggHIcY4WNz=s800" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"></a>
+                                </div>
+                                <div class="rounded-2xl overflow-hidden shadow-md h-64 border border-slate-100 group">
+                                    <a href="https://imgbb.com/" target="_blank"><img src="https://lh3.googleusercontent.com/d/1B5s5J9RaP-Z-f_gNcYN1JBpLPit1WpkL=s800" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"></a>
+                                </div>
+                                
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="bg-white border-t border-slate-200 py-12 text-center">
+            <span class="text-2xl font-extrabold text-orange-600 tracking-tighter">PRAGATI</span>
+            <p class="text-slate-400 text-xs mt-2 uppercase tracking-widest font-bold">International Excellence</p>
+        </footer>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        // Carousel Variables
+        let currentSlideIndex = 1;
+        let autoSlideTimer;
+
+        // Carousel Functions
+        function changeSlide(n) {
+            showSlide(currentSlideIndex += n);
+            resetAutoSlide();
+        }
+
+        function currentSlide(n) {
+            showSlide(currentSlideIndex = n);
+            resetAutoSlide();
+        }
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.carousel-dot');
+            
+            if (n > slides.length) {
+                currentSlideIndex = 1;
+            }
+            if (n < 1) {
+                currentSlideIndex = slides.length;
+            }
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            slides[currentSlideIndex - 1].classList.add('active');
+            dots[currentSlideIndex - 1].classList.add('active');
+        }
+
+        // Auto slide function
+        function autoSlide() {
+            changeSlide(1);
+        }
+
+        function resetAutoSlide() {
+            clearInterval(autoSlideTimer);
+            autoSlideTimer = setInterval(autoSlide, 1500);
+        }
+
+        // Start auto slide on page load
+        window.addEventListener('load', function() {
+            autoSlideTimer = setInterval(autoSlide, 1500);
+        });
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const toggleBtn = document.querySelector('.toggle-btn');
+            menu.classList.toggle('active');
+            toggleBtn.classList.toggle('active');
+        }
+
+        function showView(viewName) {
+            const homeView = document.getElementById('home-view');
+            const congressView = document.getElementById('congress-view');
+            const visionaryView = document.getElementById('visionary-view');
+            
+            homeView.classList.add('view-hidden');
+            congressView.classList.add('view-hidden');
+            visionaryView.classList.add('view-hidden');
+            
+            if (viewName === 'home') {
+                homeView.classList.remove('view-hidden');
+            } else if (viewName === 'congress') {
+                congressView.classList.remove('view-hidden');
+            } else if (viewName === 'visionary') {
+                visionaryView.classList.remove('view-hidden');
+            }
+            
+            window.scrollTo(0, 0);
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
